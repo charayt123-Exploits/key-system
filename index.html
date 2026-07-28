@@ -210,6 +210,8 @@
   </div>
 
   <script>
+    const WORKER_URL = "https://key-system.aetheriusxhub.workers.dev";
+
     const actionBtn = document.getElementById('actionBtn');
     const title = document.getElementById('title');
     const description = document.getElementById('description');
@@ -236,10 +238,7 @@
       const savedData = localStorage.getItem('user_access_key_data');
       if (savedData) {
         const { key, durationHours, expiresAt } = JSON.parse(savedData);
-        const now = Date.now();
-
-        if (now >= expiresAt) {
-          // Key has already expired
+        if (Date.now() >= expiresAt) {
           resetKey();
         } else {
           showCompletedState(key, durationHours, expiresAt);
@@ -247,25 +246,38 @@
       }
     }
 
-    function generateKey() {
+    async function generateKey() {
       const selectedHours = parseInt(durationSelect.value, 10);
-      const now = Date.now();
-      
-      // Expiration time in milliseconds (Hours * 60m * 60s * 1000ms)
-      const expiresAt = now + (selectedHours * 60 * 60 * 1000);
-      
-      // Random key structure
-      const randomKey = 'KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
+      actionBtn.innerText = "Generating...";
+      actionBtn.disabled = true;
 
-      const keyData = { 
-        key: randomKey, 
-        durationHours: selectedHours,
-        expiresAt: expiresAt
-      };
-      
-      localStorage.setItem('user_access_key_data', JSON.stringify(keyData));
+      try {
+        const response = await fetch(`${WORKER_URL}/api/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duration: selectedHours })
+        });
 
-      showCompletedState(randomKey, selectedHours, expiresAt);
+        const data = await response.json();
+
+        if (data.success) {
+          const keyData = { 
+            key: data.key, 
+            durationHours: data.duration,
+            expiresAt: data.expiresAt
+          };
+          
+          localStorage.setItem('user_access_key_data', JSON.stringify(keyData));
+          showCompletedState(data.key, data.duration, data.expiresAt);
+        } else {
+          alert("Failed to generate key. Try again.");
+          resetKey();
+        }
+      } catch (err) {
+        alert("Error connecting to key server.");
+        resetKey();
+      }
+
       dropdownMenu.classList.remove('show');
     }
 
@@ -273,8 +285,7 @@
       if (countdownInterval) clearInterval(countdownInterval);
 
       function updateTimer() {
-        const now = Date.now();
-        const timeRemaining = expiresAt - now;
+        const timeRemaining = expiresAt - Date.now();
 
         if (timeRemaining <= 0) {
           clearInterval(countdownInterval);
@@ -318,7 +329,6 @@
 
       keyDisplay.innerText = key;
       keyDisplay.style.display = 'block';
-
       timerDisplay.style.display = 'block';
 
       actionBtn.innerText = `Active Key (${duration}h)`;
