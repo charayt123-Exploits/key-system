@@ -1,201 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Key Generator Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Key Portal</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
+      --bg-color: #0b0f19;
+      --card-bg: #111827;
       --accent-color: #3b82f6;
-      --accent-hover: #2563eb;
-      --danger-color: #ef4444;
-      --danger-hover: #dc2626;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-color: #1f2937;
     }
 
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 1rem;
+      margin: 0;
     }
 
     .portal-card {
-      position: relative;
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 2.5rem 2rem 2rem 2rem;
-      max-width: 440px;
+      border-radius: 12px;
+      padding: 2rem;
       width: 100%;
-      text-align: center;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
 
-    /* Top Right Header / Cog */
     .header-actions {
       position: absolute;
-      top: 1rem;
-      right: 1rem;
+      top: 1.2rem;
+      right: 1.2rem;
     }
 
     .cog-btn {
-      background: none;
+      background: transparent;
       border: none;
-      color: var(--text-muted);
       cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s, background-color 0.2s;
-    }
-
-    .cog-btn:hover {
-      color: var(--text-main);
-      background-color: var(--border-color);
+      padding: 4px;
+      border-radius: 6px;
     }
 
     .cog-btn svg {
       width: 22px;
       height: 22px;
-      fill: currentColor;
+      fill: var(--text-muted);
+      transition: fill 0.2s;
     }
 
-    /* Dropdown Menu */
+    .cog-btn:hover svg {
+      fill: var(--text-main);
+    }
+
     .dropdown-menu {
       display: none;
       position: absolute;
-      top: 3.2rem;
-      right: 1rem;
-      background-color: #0f172a;
+      right: 0;
+      top: 30px;
+      background-color: #1f2937;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 0.75rem;
-      width: 200px;
-      text-align: left;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      padding: 1rem;
+      width: 180px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       z-index: 10;
     }
 
     .dropdown-menu.show {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .dropdown-menu label {
-      display: block;
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .dropdown-menu select {
-      width: 100%;
-      padding: 0.5rem;
-      background-color: var(--card-bg);
+      background: #111827;
       color: var(--text-main);
       border: 1px solid var(--border-color);
+      padding: 0.4rem;
       border-radius: 6px;
-      font-size: 0.9rem;
       outline: none;
-      margin-bottom: 0.75rem;
-      cursor: pointer;
     }
 
     .reset-btn {
-      width: 100%;
-      padding: 0.5rem;
-      background-color: var(--danger-color);
-      color: white;
+      background: #ef4444;
+      color: #fff;
       border: none;
+      padding: 0.4rem;
       border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.85rem;
+      margin-top: 0.5rem;
       cursor: pointer;
-      transition: background-color 0.2s;
+      font-size: 0.8rem;
     }
 
     .reset-btn:hover {
-      background-color: var(--danger-hover);
+      background: #dc2626;
     }
 
     h1 {
       font-size: 1.5rem;
+      margin-top: 0;
       margin-bottom: 0.5rem;
     }
 
     p {
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       margin-bottom: 1.5rem;
       line-height: 1.4;
     }
 
-    /* Main Action Button */
-    .btn {
-      width: 100%;
-      padding: 0.9rem;
-      background-color: var(--accent-color);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    .btn:hover:not(:disabled) {
-      background-color: var(--accent-hover);
-    }
-
-    .btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .btn:disabled {
-      background-color: #334155;
-      cursor: not-allowed;
-      opacity: 0.8;
-    }
-
-    /* Key Display Box */
     .key-box {
       display: none;
       background-color: #020617;
       border: 1px dashed var(--accent-color);
-      padding: 1.2rem;
+      padding: 1rem;
       border-radius: 8px;
       font-family: monospace;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #60a5fa;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       word-break: break-all;
       user-select: all;
+      text-align: center;
+    }
+
+    .timer-box {
+      display: none;
+      font-size: 0.85rem;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      padding: 0.5rem;
+      border-radius: 6px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-family: monospace;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      background-color: #374151;
     }
   </style>
 </head>
 <body>
 
   <div class="portal-card">
-    <!-- Top Right Cog Button & Dropdown -->
+    <!-- Top Right Settings -->
     <div class="header-actions">
       <button class="cog-btn" onclick="toggleDropdown()" title="Settings">
         <svg viewBox="0 0 24 24">
@@ -220,7 +202,10 @@
     <!-- Key Display Box -->
     <div class="key-box" id="keyDisplay"></div>
 
-    <!-- Generate Button -->
+    <!-- Countdown Display Box -->
+    <div class="timer-box" id="timerDisplay">Expires in: --:--:--</div>
+
+    <!-- Action Button -->
     <button class="btn" id="actionBtn" onclick="generateKey()">Generate Key</button>
   </div>
 
@@ -229,17 +214,18 @@
     const title = document.getElementById('title');
     const description = document.getElementById('description');
     const keyDisplay = document.getElementById('keyDisplay');
+    const timerDisplay = document.getElementById('timerDisplay');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const durationSelect = document.getElementById('durationSelect');
 
-    // Check for an existing saved key on load
+    let countdownInterval = null;
+
     window.addEventListener('DOMContentLoaded', loadSavedKey);
 
     function toggleDropdown() {
       dropdownMenu.classList.toggle('show');
     }
 
-    // Close dropdown if user clicks outside
     window.addEventListener('click', (e) => {
       if (!e.target.closest('.header-actions')) {
         dropdownMenu.classList.remove('show');
@@ -249,49 +235,96 @@
     function loadSavedKey() {
       const savedData = localStorage.getItem('user_access_key_data');
       if (savedData) {
-        const { key, durationHours } = JSON.parse(savedData);
-        showCompletedState(key, durationHours);
+        const { key, durationHours, expiresAt } = JSON.parse(savedData);
+        const now = Date.now();
+
+        if (now >= expiresAt) {
+          // Key has already expired
+          resetKey();
+        } else {
+          showCompletedState(key, durationHours, expiresAt);
+        }
       }
     }
 
     function generateKey() {
       const selectedHours = parseInt(durationSelect.value, 10);
+      const now = Date.now();
       
-      // Generate pseudo-random key
+      // Expiration time in milliseconds (Hours * 60m * 60s * 1000ms)
+      const expiresAt = now + (selectedHours * 60 * 60 * 1000);
+      
+      // Random key structure
       const randomKey = 'KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
-      // Save key data in localStorage (remains saved until Reset is pressed)
-      const keyData = { key: randomKey, durationHours: selectedHours };
+      const keyData = { 
+        key: randomKey, 
+        durationHours: selectedHours,
+        expiresAt: expiresAt
+      };
+      
       localStorage.setItem('user_access_key_data', JSON.stringify(keyData));
 
-      showCompletedState(randomKey, selectedHours);
+      showCompletedState(randomKey, selectedHours, expiresAt);
       dropdownMenu.classList.remove('show');
     }
 
+    function startCountdown(expiresAt) {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function updateTimer() {
+        const now = Date.now();
+        const timeRemaining = expiresAt - now;
+
+        if (timeRemaining <= 0) {
+          clearInterval(countdownInterval);
+          resetKey();
+          return;
+        }
+
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        const pad = (num) => String(num).padStart(2, '0');
+        timerDisplay.innerText = `Expires in: ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      }
+
+      updateTimer();
+      countdownInterval = setInterval(updateTimer, 1000);
+    }
+
     function resetKey() {
+      if (countdownInterval) clearInterval(countdownInterval);
       localStorage.removeItem('user_access_key_data');
       
-      // Reset UI back to initial state
       title.innerText = 'Key Generator';
       description.innerText = 'Click the button below to generate your access key.';
       keyDisplay.style.display = 'none';
       keyDisplay.innerText = '';
       
+      timerDisplay.style.display = 'none';
+      timerDisplay.innerText = '';
+
       actionBtn.innerText = 'Generate Key';
       actionBtn.disabled = false;
 
       dropdownMenu.classList.remove('show');
     }
 
-    function showCompletedState(key, duration) {
+    function showCompletedState(key, duration, expiresAt) {
       title.innerText = 'Key Active!';
-      description.innerText = `Your ${duration}-hour access key is active. Use the Reset Key button in settings to remove it.`;
+      description.innerText = `Your ${duration}-hour access key is active. It will automatically expire when the timer hits zero.`;
 
       keyDisplay.innerText = key;
       keyDisplay.style.display = 'block';
 
+      timerDisplay.style.display = 'block';
+
       actionBtn.innerText = `Active Key (${duration}h)`;
       actionBtn.disabled = true;
+
+      startCountdown(expiresAt);
     }
   </script>
 </body>
