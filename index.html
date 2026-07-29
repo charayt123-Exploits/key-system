@@ -1,340 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Key Portal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Website Generator & GitHub Committer</title>
   <style>
     :root {
-      --bg-color: #0b0f19;
-      --card-bg: #111827;
-      --accent-color: #3b82f6;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-color: #1f2937;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      padding: 2rem;
       margin: 0;
     }
 
-    .portal-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
+    .container {
+      background-color: var(--card);
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 2rem;
+      max-width: 650px;
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      position: relative;
-    }
-
-    .header-actions {
-      position: absolute;
-      top: 1.2rem;
-      right: 1.2rem;
-    }
-
-    .cog-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 6px;
-    }
-
-    .cog-btn svg {
-      width: 22px;
-      height: 22px;
-      fill: var(--text-muted);
-      transition: fill 0.2s;
-    }
-
-    .cog-btn:hover svg {
-      fill: var(--text-main);
-    }
-
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 30px;
-      background-color: #1f2937;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 1rem;
-      width: 180px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-
-    .dropdown-menu.show {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .dropdown-menu label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .dropdown-menu select {
-      background: #111827;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      padding: 0.4rem;
-      border-radius: 6px;
-      outline: none;
-    }
-
-    .reset-btn {
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      padding: 0.4rem;
-      border-radius: 6px;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .reset-btn:hover {
-      background: #dc2626;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
     h1 {
-      font-size: 1.5rem;
       margin-top: 0;
-      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+      color: var(--text);
     }
 
     p {
       color: var(--text-muted);
       font-size: 0.9rem;
       margin-bottom: 1.5rem;
-      line-height: 1.4;
     }
 
-    .key-box {
-      display: none;
-      background-color: #020617;
-      border: 1px dashed var(--accent-color);
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 1.1rem;
-      color: #60a5fa;
+    .form-group {
       margin-bottom: 1rem;
-      word-break: break-all;
-      user-select: all;
-      text-align: center;
     }
 
-    .timer-box {
-      display: none;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    label {
+      display: block;
       font-size: 0.85rem;
-      color: #eab308;
-      background: rgba(234, 179, 8, 0.1);
-      border: 1px solid rgba(234, 179, 8, 0.2);
-      padding: 0.5rem;
-      border-radius: 6px;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-family: monospace;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
     }
 
-    .btn {
+    input, textarea {
       width: 100%;
-      background-color: var(--accent-color);
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus {
+      outline: 2px solid var(--accent);
+      border-color: transparent;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background-color: var(--accent);
       color: white;
       border: none;
-      padding: 0.8rem;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
+      font-size: 1rem;
       cursor: pointer;
+      margin-top: 1rem;
       transition: opacity 0.2s;
     }
 
-    .btn:hover {
+    button:hover {
       opacity: 0.9;
     }
 
-    .btn:disabled {
+    button:disabled {
+      background-color: var(--border);
       cursor: not-allowed;
-      opacity: 0.6;
-      background-color: #374151;
+    }
+
+    #log {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="portal-card">
-    <!-- Top Right Settings -->
-    <div class="header-actions">
-      <button class="cog-btn" onclick="toggleDropdown()" title="Settings">
-        <svg viewBox="0 0 24 24">
-          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
-        </svg>
-      </button>
+  <div class="container">
+    <h1>AI Web Generator → GitHub</h1>
+    <p>Generate HTML/CSS using AI and push it directly to your GitHub repository.</p>
 
-      <div class="dropdown-menu" id="dropdownMenu">
-        <label for="durationSelect">Key Duration</label>
-        <select id="durationSelect">
-          <option value="1">1 Hour</option>
-          <option value="10">10 Hours</option>
-          <option value="24" selected>24 Hours</option>
-        </select>
-        <button class="reset-btn" onclick="resetKey()">Reset Key</button>
+    <div class="grid">
+      <div class="form-group">
+        <label for="openaiKey">OpenAI API Key</label>
+        <input type="password" id="openaiKey" placeholder="sk-proj-...">
+      </div>
+      <div class="form-group">
+        <label for="githubToken">GitHub Token (PAT)</label>
+        <input type="password" id="githubToken" placeholder="ghp_...">
       </div>
     </div>
 
-    <h1 id="title">Key Generator</h1>
-    <p id="description">Click the button below to generate your access key.</p>
+    <div class="grid">
+      <div class="form-group">
+        <label for="repoOwner">GitHub Username</label>
+        <input type="text" id="repoOwner" placeholder="your-username">
+      </div>
+      <div class="form-group">
+        <label for="repoName">Repository Name</label>
+        <input type="text" id="repoName" placeholder="my-web-project">
+      </div>
+    </div>
 
-    <!-- Key Display Box -->
-    <div class="key-box" id="keyDisplay"></div>
+    <div class="form-group">
+      <label for="prompt">Website Prompt</label>
+      <textarea id="prompt" placeholder="Build a dark-mode portfolio landing page with a hero header, project list, and contact button..."></textarea>
+    </div>
 
-    <!-- Countdown Display Box -->
-    <div class="timer-box" id="timerDisplay">Expires in: --:--:--</div>
+    <button id="generateBtn" onclick="runGenerator()">Generate & Commit to GitHub</button>
 
-    <!-- Action Button -->
-    <button class="btn" id="actionBtn" onclick="generateKey()">Generate Key</button>
+    <div id="log"></div>
   </div>
 
   <script>
-    const WORKER_URL = "https://key-system.aetheriusxhub.workers.dev";
-
-    const actionBtn = document.getElementById('actionBtn');
-    const title = document.getElementById('title');
-    const description = document.getElementById('description');
-    const keyDisplay = document.getElementById('keyDisplay');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    const durationSelect = document.getElementById('durationSelect');
-
-    let countdownInterval = null;
-
-    window.addEventListener('DOMContentLoaded', loadSavedKey);
-
-    function toggleDropdown() {
-      dropdownMenu.classList.toggle('show');
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      logDiv.style.display = 'block';
+      logDiv.textContent += message + '\n';
+      logDiv.scrollTop = logDiv.scrollHeight;
     }
 
-    window.addEventListener('click', (e) => {
-      if (!e.target.closest('.header-actions')) {
-        dropdownMenu.classList.remove('show');
-      }
-    });
+    async function runGenerator() {
+      const openaiKey = document.getElementById('openaiKey').value.trim();
+      const githubToken = document.getElementById('githubToken').value.trim();
+      const owner = document.getElementById('repoOwner').value.trim();
+      const repo = document.getElementById('repoName').value.trim();
+      const userPrompt = document.getElementById('prompt').value.trim();
+      const btn = document.getElementById('generateBtn');
 
-    function loadSavedKey() {
-      const savedData = localStorage.getItem('user_access_key_data');
-      if (savedData) {
-        const { key, durationHours, expiresAt } = JSON.parse(savedData);
-        if (Date.now() >= expiresAt) {
-          resetKey();
-        } else {
-          showCompletedState(key, durationHours, expiresAt);
-        }
+      if (!openaiKey || !githubToken || !owner || !repo || !userPrompt) {
+        alert('Please fill out all fields.');
+        return;
       }
-    }
 
-    async function generateKey() {
-      const selectedHours = parseInt(durationSelect.value, 10);
-      actionBtn.innerText = "Generating...";
-      actionBtn.disabled = true;
+      btn.disabled = true;
+      document.getElementById('log').textContent = '';
+      log('🤖 Requesting AI to generate website code...');
 
       try {
-        const response = await fetch(`${WORKER_URL}/api/generate`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ duration: selectedHours })
+        // 1. Call OpenAI API directly from browser
+        const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'system',
+                content: `Generate complete website code based on user prompts.
+Return ONLY valid JSON format:
+{
+  "commit_message": "Add generated index.html",
+  "files": [
+    { "path": "index.html", "content": "<!DOCTYPE html>..." },
+    { "path": "style.css", "content": "body { margin: 0; }" }
+  ]
+}`
+              },
+              { role: 'user', content: userPrompt }
+            ],
+            response_format: { type: 'json_object' }
+          })
         });
 
-        const data = await response.json();
+        if (!aiResponse.ok) throw new Error(`OpenAI Error: ${aiResponse.statusText}`);
+        const aiData = await aiResponse.json();
+        const parsedCode = JSON.parse(aiData.choices[0].message.content);
 
-        if (data.success) {
-          const keyData = { 
-            key: data.key, 
-            durationHours: data.duration,
-            expiresAt: data.expiresAt
-          };
-          
-          localStorage.setItem('user_access_key_data', JSON.stringify(keyData));
-          showCompletedState(data.key, data.duration, data.expiresAt);
-        } else {
-          alert("Failed to generate key. Try again.");
-          resetKey();
-        }
+        log(`✅ AI generated ${parsedCode.files.length} file(s).`);
+        log(`📦 Preparing GitHub commit to ${owner}/${repo}...`);
+
+        // Helper function for GitHub API headers
+        const ghHeaders = {
+          'Authorization': `Bearer ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        };
+
+        // 2. Get reference to latest commit on main branch
+        const refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, { headers: ghHeaders });
+        if (!refRes.ok) throw new Error(`GitHub Ref Error: ${refRes.statusText}. Make sure repository and main branch exist.`);
+        const refData = await refRes.json();
+        const latestCommitSha = refData.object.sha;
+
+        // 3. Create Blobs for each file
+        log('🔨 Creating Git file blobs...');
+        const treeItems = await Promise.all(parsedCode.files.map(async (file) => {
+          const blobRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/blobs`, {
+            method: 'POST',
+            headers: ghHeaders,
+            body: JSON.stringify({ content: file.content, encoding: 'utf-8' })
+          });
+          const blobData = await blobRes.json();
+          return { path: file.path, mode: '100644', type: 'blob', sha: blobData.sha };
+        }));
+
+        // 4. Create new Git Tree
+        log('🌳 Creating Git tree...');
+        const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees`, {
+          method: 'POST',
+          headers: ghHeaders,
+          body: JSON.stringify({ base_tree: latestCommitSha, tree: treeItems })
+        });
+        const treeData = await treeRes.json();
+
+        // 5. Create Commit
+        log('✍️ Creating Commit...');
+        const commitRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/commits`, {
+          method: 'POST',
+          headers: ghHeaders,
+          body: JSON.stringify({
+            message: parsedCode.commit_message || 'feat: AI website update',
+            tree: treeData.sha,
+            parents: [latestCommitSha]
+          })
+        });
+        const commitData = await commitRes.json();
+
+        // 6. Push commit (update ref)
+        log('🚀 Pushing to main branch...');
+        await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs/heads/main`, {
+          method: 'PATCH',
+          headers: ghHeaders,
+          body: JSON.stringify({ sha: commitData.sha })
+        });
+
+        log(`🎉 SUCCESS! Pushed to GitHub.`);
+        log(`🔗 Commit URL: https://github.com/${owner}/${repo}/commit/${commitData.sha}`);
+
       } catch (err) {
-        alert("Error connecting to key server.");
-        resetKey();
+        log(`❌ Error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
       }
-
-      dropdownMenu.classList.remove('show');
-    }
-
-    function startCountdown(expiresAt) {
-      if (countdownInterval) clearInterval(countdownInterval);
-
-      function updateTimer() {
-        const timeRemaining = expiresAt - Date.now();
-
-        if (timeRemaining <= 0) {
-          clearInterval(countdownInterval);
-          resetKey();
-          return;
-        }
-
-        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-        const pad = (num) => String(num).padStart(2, '0');
-        timerDisplay.innerText = `Expires in: ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-      }
-
-      updateTimer();
-      countdownInterval = setInterval(updateTimer, 1000);
-    }
-
-    function resetKey() {
-      if (countdownInterval) clearInterval(countdownInterval);
-      localStorage.removeItem('user_access_key_data');
-      
-      title.innerText = 'Key Generator';
-      description.innerText = 'Click the button below to generate your access key.';
-      keyDisplay.style.display = 'none';
-      keyDisplay.innerText = '';
-      
-      timerDisplay.style.display = 'none';
-      timerDisplay.innerText = '';
-
-      actionBtn.innerText = 'Generate Key';
-      actionBtn.disabled = false;
-
-      dropdownMenu.classList.remove('show');
-    }
-
-    function showCompletedState(key, duration, expiresAt) {
-      title.innerText = 'Key Active!';
-      description.innerText = `Your ${duration}-hour access key is active. It will automatically expire when the timer hits zero.`;
-
-      keyDisplay.innerText = key;
-      keyDisplay.style.display = 'block';
-      timerDisplay.style.display = 'block';
-
-      actionBtn.innerText = `Active Key (${duration}h)`;
-      actionBtn.disabled = true;
-
-      startCountdown(expiresAt);
     }
   </script>
 </body>
